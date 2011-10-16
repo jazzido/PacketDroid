@@ -1,0 +1,2 @@
+set solib-search-path /Users/manuel/Work/android/PacketDroid/obj/local/armeabi
+directory /opt/android-ndk-r6b/platforms/android-8/arch-arm/usr/include /Users/manuel/Work/android/PacketDroid/jni /opt/android-ndk-r6b/sources/cxx-stl/system
