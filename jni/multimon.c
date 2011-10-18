@@ -67,7 +67,7 @@ static float fbuf[16374];
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
 {
-  LOGI("called JNI_OnLoad");
+  LOGD("called JNI_OnLoad");
   return JNI_VERSION_1_6;
 }
 
@@ -77,12 +77,12 @@ void Java_com_jazzido_PacketDroid_AudioBufferProcessor_init(JNIEnv *env, jobject
   unsigned int i;
   unsigned int overlap = 0;
 
-  LOGI("YESYESYES I'm on init");
+  LOGD("YESYESYES I'm on init");
 
-  LOGI("NUMDEMOD: %d", NUMDEMOD);
+  LOGD("NUMDEMOD: %d", NUMDEMOD);
 
   for (i = 0; i < NUMDEMOD; i++) {
-    LOGI(" DEM: %s", dem[i]->name);
+    LOGD(" DEM: %s", dem[i]->name);
     memset(dem_st+i, 0, sizeof(dem_st[i]));
     dem_st[i].dem_par = dem[i];
     if (dem[i]->init)
@@ -116,7 +116,7 @@ void Java_com_jazzido_PacketDroid_AudioBufferProcessor_init(JNIEnv *env, jobject
 // FIXME 
 void Java_com_jazzido_PacketDroid_AudioBufferProcessor_processBuffer2(JNIEnv *env, jobject object, jbyteArray buf) {
 
-  LOGI("ProcessBuffer2 NATIVE");
+  LOGD("ProcessBuffer2 NATIVE");
 
   unsigned int i;
   short tmp;
@@ -127,7 +127,7 @@ void Java_com_jazzido_PacketDroid_AudioBufferProcessor_processBuffer2(JNIEnv *en
   for(i = 0; i < len / 2; i++) {
     tmp = (short) (((jbuf[(i*2)+1] & 0xFF) << 8) | (jbuf[i*2] & 0xFF));
     fbuf[fbuf_cnt++] = tmp * (1.0/32768.0); // 32k is max amplitude
-    // LOGI("SHORT %d: %d - %.10f", i, tmp, fbuf[fbuf_cnt-1]);
+    // LOGD("SHORT %d: %d - %.10f", i, tmp, fbuf[fbuf_cnt-1]);
   }
 
   if (fbuf_cnt > overlap) {
@@ -141,7 +141,7 @@ void Java_com_jazzido_PacketDroid_AudioBufferProcessor_processBuffer2(JNIEnv *en
 } 
 
 void Java_com_jazzido_PacketDroid_AudioBufferProcessor_processBuffer(JNIEnv *env, jobject object, jfloatArray fbuf, jint length) {
-  LOGI("ProcessBuffer NATIVE");
+  LOGD("ProcessBuffer NATIVE");
   jfloat *jfbuf = (*env)->GetFloatArrayElements(env, fbuf, 0);
   process_buffer(jfbuf, length);
   (*env)->ReleaseFloatArrayElements(env, fbuf, jfbuf, 0);

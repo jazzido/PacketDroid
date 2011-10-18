@@ -6,75 +6,96 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import android.app.Activity;
-import android.media.AudioFormat;
-import android.media.AudioRecord;
-import android.media.MediaRecorder.AudioSource;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class PacketDroidActivity extends Activity implements OnClickListener {
+public class PacketDroidActivity extends Activity {
 	
 	public static String LOG_TAG = "MultimonDroid";
 	
 	// TODO this shouldn't be a constant. Use Context.getApplicationInfo().dataDir
 	private String PIPE_PATH = "/data/data/com.jazzido.PacketDroid/pipe";
 	
-	private Button b;
+	private Button readButton, stopButton;
 	private TextView tv;
+	private ScrollView sv;
 	
-    /** Called when the activity is first created. */
+	private AudioBufferProcessor abp = null;
+
+	
+	// FIXME see what happens when this gets called with the application running
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        b = (Button) findViewById(R.id.button1);
-        b.setOnClickListener((android.view.View.OnClickListener) this);
+        readButton = (Button) findViewById(R.id.button1);
+        readButton.setOnClickListener(onClickReadButtonListener);
+        
+        stopButton = (Button) findViewById(R.id.button2);
+        stopButton.setOnClickListener(onClickStopButtonListener);
         
 		tv = (TextView) findViewById(R.id.textview);
-		tv.setMovementMethod(new ScrollingMovementMethod());
-
+		sv = (ScrollView) findViewById(R.id.scrollView1);
+		
+		Log.d(LOG_TAG, "PacketDroidActivity: OnCreate");
     }
+    
+    private OnClickListener onClickReadButtonListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			Log.d(LOG_TAG, "START: Monitor");
+			startMonitor();
+			
+			Log.d(LOG_TAG, "START: PipeReader");
+			startPipeRead();
+			
+			v.setEnabled(false);
+			stopButton.setEnabled(true);
+		}
+	};
+    
+	private OnClickListener onClickStopButtonListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			Log.d(LOG_TAG, "STOP: Monitor");
+			stopMonitor();
 
-	public void onClick(View v) {
-		Log.d(LOG_TAG, "START: Monitor");
-		startMonitor();
-		Log.d(LOG_TAG, "START: PipeReader");
-		startPipeRead();
+			v.setEnabled(false);
+			readButton.setEnabled(true);
+		}
+	};
+
+	private void startMonitor() {
+		if (abp == null) {
+			abp = new AudioBufferProcessor();
+			abp.start();
+		}
+		else {
+			abp.startRecording();
+		}
 	}
 	
+	private void stopMonitor() {
+		abp.stopRecording();
+	}
+	
+
 	private final Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			Log.d(LOG_TAG, "GOT MESSAGE FROM FILE READER!");
 			tv.append(msg.getData().getString("line") + "\n");
-//			tv.post(new Runnable() { 
-//                public void run() { 
-//                    tv.scrollTo(0, tv.getBottom());
-//                } 
-//            }); 
+			sv.scrollTo(0, tv.getHeight()); 
 		}
 	};
-	
-	private void startMonitor() {
-		Thread t = new Thread(null, 
-				  new Runnable () {
-					public void run() {
-						//FileBufferProcessor bp = new FileBufferProcessor("/sdcard/packet-radio-signed-16.raw");
-						AudioBufferProcessor bp = new AudioBufferProcessor();
-						bp.read();
-					}
-				  },
-		          "FBP Thread");
-		t.start();
-	}
 	
 	private void startPipeRead() {
 		Thread t = new Thread(null, new Runnable() {
