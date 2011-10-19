@@ -17,6 +17,14 @@ After I clean up the code a little bit, it'll support all the decoders implement
     - DTMF
     - ZVEI
 
+
+Building
+--------
+
+    $ ndk-build
+    $ android update project -p .
+    $ ant debug
+
 Caveat emptor
 -------------
 
