@@ -25,6 +25,14 @@ Building
     $ android update project -p .
     $ ant debug
 
+Tested Devices
+--------------
+
+- Motorola Milestone
+- Motorola Defy
+- HTC Desire Z (thanks [ge0rg](https://github.com/ge0rg)!)
+- HTC Dream (thanks [ge0rg](https://github.com/ge0rg)!)
+
 Caveat emptor
 -------------
 
