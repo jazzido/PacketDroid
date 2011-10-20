@@ -24,6 +24,8 @@ Building
     $ ndk-build
     $ android update project -p .
     $ ant debug
+    
+(you need the [Android NDK](http://developer.android.com/sdk/ndk/index.html))
 
 Tested Devices
 --------------
