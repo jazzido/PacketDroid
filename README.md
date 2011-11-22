@@ -34,6 +34,7 @@ Tested Devices
 - Motorola Defy
 - HTC Desire Z (thanks [ge0rg](https://github.com/ge0rg)!)
 - HTC Dream (thanks [ge0rg](https://github.com/ge0rg)!)
+- Sony Xperia Mini Pro (thanks Martin OK1DJO!)
 
 Caveat emptor
 -------------
