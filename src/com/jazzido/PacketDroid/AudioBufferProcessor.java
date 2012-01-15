@@ -9,9 +9,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder.AudioSource;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
 import net.ab0oo.aprs.parser.Parser;
@@ -19,7 +16,7 @@ import net.ab0oo.aprs.parser.Parser;
 public class AudioBufferProcessor extends Thread {
 
 	private AudioIn audioIn = new AudioIn();
-	private Handler uihandler;
+	private PacketCallback callback;
 	
 	private boolean inited = false;
 	
@@ -46,11 +43,11 @@ public class AudioBufferProcessor extends Thread {
         System.loadLibrary("multimon");
     }
 	
-	public AudioBufferProcessor(Handler ui) {
+	public AudioBufferProcessor(PacketCallback cb) {
 		super("AudioBuffeProcessor");
 		queue = new LinkedBlockingQueue<short[]>();
 
-		uihandler = ui;
+		callback = cb;
 
 		if (writeAudioBuffer) {
 			try {
@@ -176,17 +173,6 @@ public class AudioBufferProcessor extends Thread {
 
 	public void callback(byte[] data) {
 		Log.d(PacketDroidActivity.LOG_TAG, "called callback: " + new String(data));
-		Message msg = Message.obtain();
-		msg.what = 0;
-		Bundle bundle = new Bundle();
-		String packet;
-		try {
-			packet = Parser.parseAX25(data).toString();
-		} catch (Exception e) {
-			packet = "raw " + new String(data);
-		}
-		bundle.putString("line", packet);
-		msg.setData(bundle);
-		uihandler.sendMessage(msg);
+		callback.received(data);
 	}
 }

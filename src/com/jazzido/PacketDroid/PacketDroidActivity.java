@@ -16,7 +16,9 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class PacketDroidActivity extends Activity {
+import net.ab0oo.aprs.parser.Parser;
+
+public class PacketDroidActivity extends Activity implements PacketCallback {
 	
 	public static String LOG_TAG = "MultimonDroid";
 	
@@ -75,7 +77,7 @@ public class PacketDroidActivity extends Activity {
 
 	private void startMonitor() {
 		if (abp == null) {
-			abp = new AudioBufferProcessor(handler);
+			abp = new AudioBufferProcessor(this);
 			abp.start();
 		}
 		else {
@@ -130,7 +132,21 @@ public class PacketDroidActivity extends Activity {
 	}
 	
 	
-	
+	// PacketCallback interface
+	public void received(byte[] data) {
+		Message msg = Message.obtain();
+		msg.what = 0;
+		Bundle bundle = new Bundle();
+		String packet;
+		try {
+			packet = Parser.parseAX25(data).toString();
+		} catch (Exception e) {
+			packet = "raw " + new String(data);
+		}
+		bundle.putString("line", packet);
+		msg.setData(bundle);
+		handler.sendMessage(msg);
+	}
 }
 	
 	
