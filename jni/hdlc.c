@@ -82,6 +82,7 @@ static inline int check_crc_ccitt(const unsigned char *buf, int cnt)
 }
 
 /* ---------------------------------------------------------------------- */
+void send_frame_to_java(unsigned char *bp, unsigned int len);
 
 static void ax25_disp_packet(struct demod_state *s, unsigned char *bp, unsigned int len)
 {

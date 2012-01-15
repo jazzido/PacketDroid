@@ -132,10 +132,35 @@ void Java_com_jazzido_PacketDroid_AudioBufferProcessor_processBuffer2(JNIEnv *en
 
 } 
 
+JNIEnv *env_global;
+jobject *abp_global;
+
 void Java_com_jazzido_PacketDroid_AudioBufferProcessor_processBuffer(JNIEnv *env, jobject object, jfloatArray fbuf, jint length) {
+  env_global = env;
+  abp_global = object;
   LOGD("ProcessBuffer NATIVE");
   jfloat *jfbuf = (*env)->GetFloatArrayElements(env, fbuf, 0);
   process_buffer(jfbuf, length);
   (*env)->ReleaseFloatArrayElements(env, fbuf, jfbuf, 0);
 }
 
+void send_frame_to_java(unsigned char *bp, unsigned int len) {
+  LOGD("send_frame_to_java NATIVE");
+
+  // prepare data array to pass to callback
+  jbyteArray data = (*env_global)->NewByteArray(env_global, len);
+  if (data == NULL) {
+    LOGD("OOM on allocating data buffer");
+    return;
+  }
+  (*env_global)->SetByteArrayRegion(env_global, data, 0, len, (jbyte*)bp);
+
+  // get callback function
+  jclass cls = (*env_global)->GetObjectClass(env_global, abp_global);
+  jmethodID callback = (*env_global)->GetMethodID(env_global, cls, "callback", "([B)V");
+  if (callback == 0)
+    return;
+  (*env_global)->CallVoidMethod(env_global, abp_global, callback, data);
+  //(*env_global)->ReleaseByteArrayElements(env_global, data);
+
+}
