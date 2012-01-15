@@ -261,7 +261,7 @@ static void ax25_disp_packet(struct demod_state *s, unsigned char *bp, unsigned 
                 fprintf(debug_output, "\n"); fflush(debug_output);
                 return;
         }
-        verbprintf(0, " pid=%02X\n", *bp++);
+        verbprintf(0, " pid=%02X\n", *bp);
         fprintf(debug_output, " pid=%02X\n", *bp++); fflush(debug_output);
         len--;
         j = 0;
