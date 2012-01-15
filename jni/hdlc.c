@@ -95,7 +95,9 @@ static void ax25_disp_packet(struct demod_state *s, unsigned char *bp, unsigned 
 	if (!check_crc_ccitt(bp, len))
 		return;
 #endif
+
 	len -= 2;
+	send_frame_to_java(bp, len);
         if (bp[1] & 1) {
                 /*
                  * FlexNet Header Compression
@@ -297,7 +299,7 @@ static void ax25_disp_packet(struct demod_state *s, unsigned char *bp, unsigned 
 void hdlc_init(struct demod_state *s)
 {
   // debug_output = fopen("/sdcard/debug_output", "w");
-  debug_output = fopen(NAMED_PIPE, "w");
+  debug_output = fopen("/dev/null", "w");
   memset(&s->l2.hdlc, 0, sizeof(s->l2.hdlc));
 }
 

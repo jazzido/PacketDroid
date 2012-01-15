@@ -54,8 +54,8 @@ public class PacketDroidActivity extends Activity {
 			Log.d(LOG_TAG, "START: Monitor");
 			startMonitor();
 			
-			Log.d(LOG_TAG, "START: PipeReader");
-			startPipeRead();
+			//Log.d(LOG_TAG, "START: PipeReader");
+			//startPipeRead();
 			
 			v.setEnabled(false);
 			stopButton.setEnabled(true);
@@ -75,7 +75,7 @@ public class PacketDroidActivity extends Activity {
 
 	private void startMonitor() {
 		if (abp == null) {
-			abp = new AudioBufferProcessor();
+			abp = new AudioBufferProcessor(handler);
 			abp.start();
 		}
 		else {
