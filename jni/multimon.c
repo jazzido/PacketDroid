@@ -15,7 +15,7 @@
 #include "multimon.h"
 
 
-static const struct demod_param *dem[] = { ALL_DEMOD };
+static const struct demod_param *dem[] = { &demod_afsk1200 };
 
 #define NUMDEMOD (sizeof(dem)/sizeof(dem[0]))
 
@@ -49,15 +49,7 @@ void verbprintf(int verb_level, const char *fmt, ...)
 
 static void process_buffer(float *buf, unsigned int len)
 {
-	int i;
-
-	/* for (i = 0; i <  NUMDEMOD; i++)  */
-	/* 	if (MASK_ISSET(i) && dem[i]->demod) */
-	/* 		dem[i]->demod(dem_st+i, buf, len); */
-        //(&demod_afsk1200)->demod(&dem_afsk1200_st, buf, len);
-        dem[3]->demod(dem_st+3, buf, len);
-        //(*demod_afsk1200)->demod(dem_st+3, buf, len);
-        //        dem[3]->demod(dem_st+3, buf, len);
+        dem[0]->demod(dem_st+0, buf, len);
 }
 
 
